@@ -7,7 +7,7 @@ option inspired by simple state management libraries like Zustand or Jotai.
 
 In a current Preact application you would be easily tempted to use a state management solution from the React ecosystem which relies
 on the VDOM. If you use a library like this then then your application wide state updates could be causing full VDOM rerenders. Signals
-provide us an escape from that on the scale of micro-state, but this 0.25KB library aims to scale that solution for larger applications.
+provide us an escape from that on the scale of micro-state, but this 0.4KB library aims to scale that solution for larger applications.
 
 ## How does it work?
 
