@@ -1,7 +1,7 @@
 {
   "name": "preact-signal-store",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "files": [
     "dist"
@@ -34,5 +34,18 @@
     "vite": "^3.1.0",
     "vite-plugin-dts": "^1.4.1",
     "vitest": "^0.23.1"
-  }
+  },
+  "homepage": "https://github.com/EthanStandel/preact-signal-store#readme",
+  "repository": "https://github.com/EthanStandel/preact-signal-store",
+  "keywords": [
+    "preact",
+    "react",
+    "state",
+    "management",
+    "manager",
+    "cqrs",
+    "redux",
+    "store",
+    "signal"
+  ]
 }
