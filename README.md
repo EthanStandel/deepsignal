@@ -107,6 +107,105 @@ const appStore = store({
 });
 ```
 
+### What if I need the actual value of my store?
+
+You can use the handy `destore` function!
+
+```ts
+import { store, destore } from "preact-signal-store";
+
+// appStore is of type { hello: { world: { foo: Signal<string> } } }
+const appStore = store({
+  hello: {
+    world: {
+      foo: "bar"
+    }
+  }
+});
+
+// appModel is of type { hello: { world: { foo: string } } }
+const appModel = destore(appStore);
+```
+
+#### Warning: `destore` caveat!
+
+The `destore` function should be considered a one-way trip, due to the possibility of the following example.
+
+```ts
+import { store, destore } from "preact-signal-store";
+
+// initialAppModel is of type { hello: { world: () => { foo: string } } }
+const initialAppModel = {
+  hello: {
+    world: () => ({
+      foo: "bar"
+    })
+  }
+}
+
+// appStore is of type { hello: { world: Signal<{foo: string}> } }
+const appStore = store(initialAppModel);
+
+// destoredAppModel is of type { hello: { world: { foo: string } } }
+const destoredAppModel = destore(appStore);
+
+// appRestored is of type { hello: { world: { foo: Signal<string> } } }
+const appRestored = store(destoredAppModel);
+// DO NOT DO ^THIS
+```
+
+Notice how `destoredAppModel` is not the same type as `initialAppModel` and when it's put back into `store`, it produces a different type.
+The difference is slight, but could lead to bad bugs that would be hard to trace down. It's a good idea in principal to base your store state
+off of a single instance anyways.
+
+### Can I use store in a local context?
+
+You absolutely can, by utilizing `useStore` you can get a local state DX that's very similar to class components
+while continuing to have the performance advantages of signals.
+
+```tsx
+import { useStore } from "preact-signal-store";
+
+const UserRegistrationForm = () => {
+  const userStore = useStore(() => {
+    name: {
+      first: "",
+      last: ""
+    },
+    email: ""
+  });
+
+  const submitRegistration = async () => {
+    const user = destore(userStore);
+    await fetch(
+      "/register",
+      { method: "POST", body: JSON.stringify(user) }
+    );
+  }
+
+  return (
+    <form onSubmit={submitRegistration}>
+      <label>
+        First name
+        <input value={userStore.name.first} 
+          onInput={e => userStore.name.first = e.currentTarget.value} />
+      </label>
+      <label>
+        Last name
+        <input value={userStore.name.last}
+          onInput={e => userStore.name.last = e.currentTarget.value} />
+      </label>
+      <label>
+        Email
+        <input value={userStore.email}
+          onInput={e => userStore.email = e.currentTarget.value} />
+      </label>
+      <button>Submit</button>
+    </form>
+  );
+}
+```
+
 ### So is that it?
 
 Yeah basically. When I look to Zustand for the API it provides, it seems like a lot of their API (as much as I admire it) is based around 

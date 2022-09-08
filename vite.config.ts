@@ -8,6 +8,7 @@ const coverage = 100;
 // https://vitejs.dev/config/
 export default defineConfig({
   test: {
+    environment: "jsdom",
     coverage: {
       statements: coverage,
       functions: coverage,
