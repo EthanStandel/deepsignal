@@ -47,5 +47,6 @@
     "redux",
     "store",
     "signal"
-  ]
+  ],
+  "license": "MIT"
 }
