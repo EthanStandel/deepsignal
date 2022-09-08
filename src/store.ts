@@ -1,5 +1,5 @@
 import { signal, Signal } from "@preact/signals";
-import { useMemo,  } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 
 export type Signalable = Array<any> | string | boolean | number | bigint | symbol | undefined | null;
 

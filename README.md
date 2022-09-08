@@ -164,16 +164,16 @@ You absolutely can, by utilizing `useStore` you can get a local state DX that's 
 while continuing to have the performance advantages of signals.
 
 ```tsx
-import { useStore } from "preact-signal-store";
+import { useStore, destore } from "preact-signal-store";
 
 const UserRegistrationForm = () => {
-  const userStore = useStore(() => {
+  const userStore = useStore(() => ({
     name: {
       first: "",
       last: ""
     },
     email: ""
-  });
+  }));
 
   const submitRegistration = async () => {
     const user = destore(userStore);
@@ -188,17 +188,17 @@ const UserRegistrationForm = () => {
       <label>
         First name
         <input value={userStore.name.first} 
-          onInput={e => userStore.name.first = e.currentTarget.value} />
+          onInput={e => userStore.name.first.value = e.currentTarget.value} />
       </label>
       <label>
         Last name
         <input value={userStore.name.last}
-          onInput={e => userStore.name.last = e.currentTarget.value} />
+          onInput={e => userStore.name.last.value = e.currentTarget.value} />
       </label>
       <label>
         Email
         <input value={userStore.email}
-          onInput={e => userStore.email = e.currentTarget.value} />
+          onInput={e => userStore.email.value = e.currentTarget.value} />
       </label>
       <button>Submit</button>
     </form>
