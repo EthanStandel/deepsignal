@@ -136,8 +136,8 @@ const baseBearStore = store({
 
 export const bearStore = {
   ...baseBearStore,
-  increasePopulation: () => baseBearStore.bears++,
-  removeAllBears: () => baseBearStore.bears = 0
+  increasePopulation: () => baseBearStore.bears.value++,
+  removeAllBears: () => baseBearStore.bears.value = 0
 };
 ```
 
