@@ -16,9 +16,10 @@
     }
   },
   "scripts": {
-    "build": "tsc --emitDeclarationOnly && vite build",
+    "build": "npm run test && tsc --emitDeclarationOnly && vite build",
     "build:publish": "npm run build && npm publish",
-    "build:publish:local": "npm run build && npm publish --registry http://localhost:4873/"
+    "build:publish:local": "npm run build && npm publish --registry http://localhost:4873/",
+    "test": "vitest run --coverage"
   },
   "peerDependencies": {
     "@preact/signals": "*"
@@ -27,9 +28,11 @@
     "@preact/preset-vite": "^2.3.0",
     "@preact/signals": "^1.0.1",
     "@types/node": "^18.7.16",
+    "@vitest/coverage-c8": "^0.23.1",
     "preact": "^10.10.6",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
-    "vite-plugin-dts": "^1.4.1"
+    "vite-plugin-dts": "^1.4.1",
+    "vitest": "^0.23.1"
   }
 }
