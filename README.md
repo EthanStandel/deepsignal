@@ -33,13 +33,13 @@ const appStore = store({
 ```ts
 import { signal } from "@preact/signals";
 
-const appStore = store({
+const appStore = {
   hello: {
     world: {
       foo: signal("bar")
     }
   }
-});
+};
 ```
 
 Simple right? `preact-signal-store` will turn any inner property that is of type 
@@ -67,13 +67,13 @@ const appStore = store({
 ```ts
 import { signal } from "@preact/signals";
 
-const appStore = store({
+const appStore = {
   hello: {
     world: signal({
       foo: "bar"
     })
   }
-});
+};
 ```
 
 ### But then what if I want a signal that's a function?
@@ -98,13 +98,13 @@ const appStore = store({
 ```ts
 import { signal } from "@preact/signals";
 
-const appStore = store({
+const appStore = {
   hello: {
     world: signal(() => ({
       foo: "bar"
     }))
   }
-});
+};
 ```
 
 ### What if I need the actual value of my store?
