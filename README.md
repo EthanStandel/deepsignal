@@ -3,6 +3,12 @@
 This library is meant to expand on Preact's new `Signal` primitive to make it a viable state management solution at the scale of a full
 state management system by wrapping the built in primitive with a new `DeepSignal` model.
 
+### Major v2.0 updates
+
+This library was originally written with a much simpler `store` model. Version 2.0 aims to make the new `DeepSignal` model act far closer
+to how `Signals` work under the hood. I hope this should make it more accessible to Preact developers already comfortable with the `Signal`
+primitive.
+
 ## Why use `preact-signal-store`?
 
 In a current Preact application you would be easily tempted to use a state management solution from the React ecosystem which relies
