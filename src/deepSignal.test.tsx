@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { describe, it, expect } from "vitest";
-import { deepSignal, useDeepSignal } from "./store";
+import { deepSignal, useDeepSignal } from "./deepSignal";
 import { effect, Signal } from "@preact/signals";
 import { render, fireEvent } from "@testing-library/preact";
 
