@@ -197,7 +197,7 @@ type UserStore = {
 const getInitialUserStore = (): UserStore => {
   const storedUserStore = localStorage.getItem("USER_STORE_KEY");
   if (storedUserStore) {
-    // you should probably validate this too 🤷‍♂️
+    // you should probably validate this 🤷‍♂️
     return JSON.parse(storedUserStore);
   } else {
     return {
@@ -227,7 +227,7 @@ type UserNameStore = {
 };
 
 const getInitialUserNameStore = (): UserNameStore => {
-  const storedUserStore = localStorage.get("USER_NAME_STORE_KEY");
+  const storedUserStore = localStorage.getItem("USER_NAME_STORE_KEY");
 
   // you should probably validate this too 🤷‍♂️
   return storedUserStore ? JSON.parse(storedUserStore) : { first: "", last: "" },
@@ -238,7 +238,7 @@ const userStore = deepSignal({
   email: ""
 });
 
-effect(() => localStorage.set("USER_NAME_STORE_KEY", JSON.stringify(userStore.name.value)));
+effect(() => localStorage.setItem("USER_NAME_STORE_KEY", JSON.stringify(userStore.name.value)));
 ```
 
 This should fulfill most needs for middleware or plugins. If this fails to meet your needs, please file an
