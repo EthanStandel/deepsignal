@@ -23,6 +23,6 @@ export default defineConfig({
       name: "preact-signal-store",
       fileName: (format) => `lib.${format}.js`
     },
-    rollupOptions: { external: ["@preact/signals", "preact"] }
+    rollupOptions: { external: ["@preact/signals", "preact", "preact/hooks"] }
   },
 });

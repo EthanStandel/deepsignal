@@ -54,14 +54,9 @@ const setValue = <U extends Storeable, T extends DeepSignal<U>> (
   deepSignal: T,
   payload: U
 ): void =>
-  Object.keys(payload).forEach((key: keyof U) => {
-    const dsv = deepSignal[key];
-    if (dsv instanceof DeepSignalImpl) {
-      dsv.value = payload[key];
-    } else if (dsv instanceof Signal) {
-      dsv.value = payload[key];
-    }
-  });
+  Object.keys(payload).forEach((key: keyof U) => 
+    deepSignal[key].value = payload[key]
+  );
 
 const getValue = <U extends Storeable, T extends DeepSignal<U>> (
   deepSignal: T,
