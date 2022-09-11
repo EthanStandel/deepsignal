@@ -195,7 +195,7 @@ type UserStore = {
 }
 
 const getInitialUserStore = (): UserStore => {
-  const storedUserStore = localStorage.get("USER_STORE_KEY");
+  const storedUserStore = localStorage.getItem("USER_STORE_KEY");
   if (storedUserStore) {
     // you should probably validate this too 🤷‍♂️
     return JSON.parse(storedUserStore);
@@ -212,7 +212,7 @@ const getInitialUserStore = (): UserStore => {
 
 const userStore = deepSignal(getInitialUserStore());
 
-effect(() => localStorage.set("USER_STORE_KEY", JSON.stringify(userStore.value)));
+effect(() => localStorage.setItem("USER_STORE_KEY", JSON.stringify(userStore.value)));
 ```
 
 This would also work for any level of the `DeepSignal`.
