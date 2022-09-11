@@ -1,44 +1,41 @@
 import { h } from "preact";
 import { describe, it, expect } from "vitest";
-import { store, destore, useStore } from "./store";
-import { Signal } from "@preact/signals";
+import { deepSignal, useDeepSignal } from "./store";
+import { effect, Signal } from "@preact/signals";
 import { render, fireEvent } from "@testing-library/preact";
 
-describe("store", () => {
+describe("deepSignal", () => {
 
   it("turns string properties into Signals", () => {
-    const testStore = store({
+    const testStore = deepSignal({
       hello: "world"
     });
     expect(testStore.hello instanceof Signal).toBeTruthy();
+    expect(testStore.value.hello).toBe("world");
   });
 
-  it("turns deeply nested string properties into Signals", () => {
-    const testStore = store({
+  it("turns deeply nested atomic properties into Signals with peek and value", () => {
+    const testStore = deepSignal({
       hello: {
         world: {
-          foo: "bar"
+          foo: "bar" as number | string | Array<number>
         }
       }
     });
     expect(testStore.hello.world.foo instanceof Signal).toBeTruthy();
+    expect(testStore.value.hello.world.foo).toBe("bar");
+    expect(testStore.hello.value.world.foo).toBe("bar");
+    expect(testStore.hello.world.value.foo).toBe("bar");
     expect(testStore.hello.world.foo.value).toBe("bar"); 
+    testStore.value = { hello: { world: { foo: 123 }} };
+    expect(testStore.peek().hello.world.foo).toBe(123);
+    expect(testStore.hello.peek().world.foo).toBe(123);
+    expect(testStore.hello.world.peek().foo).toBe(123);
+    expect(testStore.hello.world.foo.peek()).toBe(123); 
   });
 
-  it("turns deeply nested number properties into Signals", () => {
-    const testStore = store({
-      hello: {
-        world: {
-          foo: 123
-        }
-      }
-    });
-    expect(testStore.hello.world.foo instanceof Signal).toBeTruthy();
-    expect(testStore.hello.world.foo.value).toBe(123); 
-  });
-
-  it("turns deeply nested arrays into Signals", () => {
-    const testStore = store({
+  it("turns deeply nested arrays into Signals  with peek and value", () => {
+    const testStore = deepSignal({
       hello: {
         world: {
           foo: [1, 2, 3]
@@ -46,113 +43,26 @@ describe("store", () => {
       }
     });
     expect(testStore.hello.world.foo instanceof Signal).toBeTruthy();
-    expect(testStore.hello.world.foo.value[1]).toBe(2); 
+    expect(testStore.value.hello.world.foo[0]).toBe(1);
+    expect(testStore.hello.value.world.foo[0]).toBe(1);
+    expect(testStore.hello.world.value.foo[0]).toBe(1);
+    expect(testStore.hello.world.foo.value[0]).toBe(1); 
+    testStore.value = { hello: { world: { foo: [3, 2, 1] }} };
+    expect(testStore.peek().hello.world.foo[0]).toBe(3);
+    expect(testStore.hello.peek().world.foo[0]).toBe(3);
+    expect(testStore.hello.world.peek().foo[0]).toBe(3);
+    expect(testStore.hello.world.foo.peek()[0]).toBe(3); 
   });
 
-  it("turns functions into the signal of their ReturnType", () => {
-    const testStore = store({
-      hello: () => ({
-        world: {
-          foo: "bar"
-        }
-      })
-    });
-    expect(testStore.hello instanceof Signal).toBeTruthy();
-    expect(testStore.hello.value.world.foo).toBe("bar"); 
-  });
-
-  it("turns nested functions into the signal of a function", () => {
-    const testStore = store({
-      hello: () => () => ({
-        world: {
-          foo: "bar"
-        }
-      })
-    });
-    expect(testStore.hello instanceof Signal).toBeTruthy();
-    expect(typeof testStore.hello.value).toBe("function");
-    expect(testStore.hello.value().world.foo).toBe("bar"); 
-  });
-
-});
-
-describe("destore", () => {
-
-  it("destores deeply nested Signal<string>", () => {
-    const testModel = destore(store({
-      hello: {
-        world: {
-          foo: "bar"
-        }
-      }
-    }));
-    expect(testModel.hello.world.foo).toBe("bar");
-  });
-
-  it("loses initial function references", () => {
-    const testModel = destore(store({
-      hello: {
-        world: () => ({
-          foo: "bar"
-        })
-      }
-    }));
-    expect(testModel.hello.world.foo).toBe("bar");
-  });
-
-  it("destores deeply nested Signal<Array<any>>", () => {
-    const testModel = destore(store({
-      hello: {
-        world: {
-          foo: [1, 2, 3]
-        }
-      }
-    }));
-    expect(testModel.hello.world.foo[1]).toBe(2);
-  });
-
-  it("returns non-signal values", () => {
-    const testModel = destore(
-      {
-        ...store({
-        hello: {
-          world: {
-            foo: [1, 2, 3]
-          }
-        }
-        }),
-        baz: "qux"
-      },
-    );
-    expect(testModel.baz).toBe("qux");
-  });
-
-  it("returns non-signal values", () => {
-    const testModel = destore(
-      {
-        ...store({
-        hello: {
-          world: {
-            foo: [1, 2, 3]
-          }
-        }
-        }),
-        baz: "qux"
-      },
-    );
-    expect(testModel.baz).toBe("qux");
-  });
-
-  it("destore in a render will track by default", () => {
-    let renderCount = 0;
-    const testStore = store({ count: 0 });
+  it("rerenders if inner Signal is updated but the DeepSignal is subscribed to", () => {
+    let renderCount = -1;
+    const deepSignalInstance = deepSignal({ inner: { count: 0 } });
     const Test = () => {
-      const { count } = destore(testStore);
       renderCount++;
       return (
         <>
-          <div data-testid="count">Count is {count}</div>
-          <button onClick={() => testStore.count.value++}>Increment</button>
+          <div data-testid="count">Count is {deepSignalInstance.value.inner.count}</div>
+          <button onClick={() => deepSignalInstance.inner.count.value++}>Increment</button>
         </> 
       )
     }
@@ -161,21 +71,22 @@ describe("destore", () => {
     fireEvent.click(button);
     fireEvent.click(button);
     fireEvent.click(button);
-    expect(renderCount).toBe(4);
+    expect(renderCount).toBe(3);
     expect(page.getByTestId("count").innerHTML).toBe("Count is 3");
     page.unmount();
   });
 
-  it("destore in a render will peek if the peek option is passed as true", () => {
-    let renderCount = 0;
-    const testStore = store({ count: 0 });
+  it("rerenders if DeepSignal is updated but the inner Signal is subscribed to", () => {
+    let renderCount = -1;
+    const deepSignalInstance = deepSignal({ inner: { count: 0 } });
     const Test = () => {
-      const { count } = destore(testStore, { peek: true });
       renderCount++;
       return (
         <>
-          <div data-testid="count">Count is {count}</div>
-          <button onClick={() => testStore.count.value++}>Increment</button>
+          <div data-testid="count">Count is {deepSignalInstance.inner.count.value}</div>
+          <button onClick={() => deepSignalInstance.value = { inner: { count: deepSignalInstance.inner.count.peek() + 1 } }}>
+            Increment
+          </button>
         </> 
       )
     }
@@ -184,44 +95,20 @@ describe("destore", () => {
     fireEvent.click(button);
     fireEvent.click(button);
     fireEvent.click(button);
-    expect(renderCount).toBe(1);
-    expect(page.getByTestId("count").innerHTML).toBe("Count is 0");
-    page.unmount();
-  });
-});
-
-describe("useStore", () => {
-  it("can create a context-based store for a single render", () => {
-    let renderCount = 0;
-    const Test = () => {
-      const state = useStore({ count: 0 });
-      renderCount++;
-      return (
-        <>
-          <div data-testid="count">Count is {state.count}</div>
-          <button onClick={() => state.count.value++}>Increment</button>
-        </> 
-      )
-    }
-    const page = render(<Test />);
-    const button = page.getByRole("button");
-    fireEvent.click(button);
-    fireEvent.click(button);
-    fireEvent.click(button);
-    expect(renderCount).toBe(1);
+    expect(renderCount).toBe(3);
     expect(page.getByTestId("count").innerHTML).toBe("Count is 3");
     page.unmount();
   });
 
-  it("can create a context-based store for a single render based off a factory function", () => {
-    let renderCount = 0;
+  it("can be used in a local-only context", () => {
+    let renderCount = -1;
     const Test = () => {
-      const state = useStore(() => ({ count: 0 }));
+      const deepSignalInstance = useDeepSignal({ inner: { count: 0 } });
       renderCount++;
       return (
         <>
-          <div data-testid="count">Count is {state.count}</div>
-          <button onClick={() => state.count.value++}>Increment</button>
+          <div data-testid="count">Count is {deepSignalInstance.value.inner.count}</div>
+          <button onClick={() => deepSignalInstance.inner.count.value++}>Increment</button>
         </> 
       )
     }
@@ -230,8 +117,38 @@ describe("useStore", () => {
     fireEvent.click(button);
     fireEvent.click(button);
     fireEvent.click(button);
-    expect(renderCount).toBe(1);
+    expect(renderCount).toBe(3);
     expect(page.getByTestId("count").innerHTML).toBe("Count is 3");
     page.unmount();
   });
+
+  it("can be used in a local-only context using functional setter", () => {
+    let renderCount = -1;
+    const Test = () => {
+      const deepSignalInstance = useDeepSignal(() => ({ inner: { count: 0 } }));
+      renderCount++;
+      return (
+        <>
+          <div data-testid="count">Count is {deepSignalInstance.inner.count.value}</div>
+          <button onClick={() => deepSignalInstance.value = { inner: { count: deepSignalInstance.inner.count.peek() + 1 } }}>
+            Increment
+          </button>
+        </> 
+      )
+    }
+    const page = render(<Test />);
+    const button = page.getByRole("button");
+    fireEvent.click(button);
+    fireEvent.click(button);
+    fireEvent.click(button);
+    expect(renderCount).toBe(3);
+    expect(page.getByTestId("count").innerHTML).toBe("Count is 3");
+    page.unmount();
+  });
+
+  it("doesn't allow you to set a property with keys named peek or value", () => {
+    expect(() => deepSignal({ value: "hello" })).toThrowError(/reserved property name/);
+    expect(() => deepSignal({ peek: "hello" })).toThrowError(/reserved property name/);
+  });
+
 });

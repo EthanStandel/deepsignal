@@ -1,7 +1,7 @@
 {
   "name": "preact-signal-store",
   "private": false,
-  "version": "1.0.3",
+  "version": "2.0.0-beta.0",
   "type": "module",
   "files": [
     "dist"
@@ -18,6 +18,7 @@
   "scripts": {
     "build": "npm run test && tsc --emitDeclarationOnly && vite build",
     "build:publish": "npm run build && npm publish",
+    "build:publish:beta": "npm run build && npm publish --tag beta",
     "build:publish:local": "npm run build && npm publish --registry http://localhost:4873/",
     "test": "vitest run --coverage"
   },
