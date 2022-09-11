@@ -19,7 +19,7 @@ export default defineConfig({
   plugins: [preact(), dts({ insertTypesEntry: true })],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/store.ts"),
+      entry: path.resolve(__dirname, "src/deepSignal.ts"),
       name: "preact-signal-store",
       fileName: (format) => `lib.${format}.js`
     },

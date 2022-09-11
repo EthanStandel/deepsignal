@@ -50,6 +50,7 @@
     "cqrs",
     "redux",
     "store",
+    "deep",
     "signal"
   ],
   "license": "MIT"
