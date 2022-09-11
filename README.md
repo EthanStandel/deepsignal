@@ -240,4 +240,19 @@ issue and I will address the particular ask.
 
 ## TypeScript support
 
-The API for `deepStore` and `useDeepStore` will handle dynamic typing for arbitrary input!
+The API for `deepStore` and `useDeepStore` will handle dynamic typing for arbitrary input! It will also help you avoid a case like this
+
+```ts
+import { deepSignal } from "preact-signal-store";
+
+const userStore = deepSignal({
+  name: {
+    first: "Thor",
+    last: "Odinson"
+  },
+  email: "thor@avengers.org"
+});
+
+// TS error: Cannot assign to 'email' because it is a read-only property.
+userStore.value.email = "another@email.com"
+```

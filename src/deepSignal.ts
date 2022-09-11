@@ -7,11 +7,11 @@ type Storeable = {
   [key: string]: (() => any) | Signalable | Storeable
 };
 
-type Store = {
-  [key: string]: Signal<any> | Signalable | ((...arg: any[]) => any) | Store;
-};
+type ReadOnlyDeep<T> = {
+  readonly [P in keyof T]: ReadOnlyDeep<T[P]>;
+}
 
-export interface IDeepSignal<T extends Storeable> { value: T, peek: () => T };
+export interface IDeepSignal<T extends Storeable> { value: ReadOnlyDeep<T>, peek: () => ReadOnlyDeep<T> };
 
 export type DeepSignal<T extends Storeable> = IDeepSignal<T> & {
   [K in keyof T]: 
@@ -21,16 +21,16 @@ export type DeepSignal<T extends Storeable> = IDeepSignal<T> & {
 };
 
 class DeepSignalImpl<T extends Storeable> implements IDeepSignal<T> {
-  get value(): T {
-    return getValue(this as DeepSignal<T>);
+  get value(): ReadOnlyDeep<T> {
+    return getValue(this as any as DeepSignal<T>);
   }
 
-  set value(payload: T) {
-    batch(() => setValue(this as DeepSignal<T>, payload));
+  set value(payload: ReadOnlyDeep<T>) {
+    batch(() => setValue(this as any as DeepSignal<T>, payload));
   }
 
-  peek(): T {
-    return getValue(this as DeepSignal<T>, { peek: true });
+  peek(): ReadOnlyDeep<T> {
+    return getValue(this as any as DeepSignal<T>, { peek: true });
   }
 }
 
@@ -58,10 +58,10 @@ const setValue = <U extends Storeable, T extends DeepSignal<U>> (
     deepSignal[key].value = payload[key]
   );
 
-const getValue = <U extends Storeable, T extends DeepSignal<U>> (
+const getValue = <U extends Storeable, T extends DeepSignal<U>, X extends ReadOnlyDeep<U>> (
   deepSignal: T,
   { peek = false }: { peek?: boolean } = {}
-): U =>
+): X =>
   Object.entries(deepSignal).reduce((
     acc,
     [key, value]
@@ -72,7 +72,7 @@ const getValue = <U extends Storeable, T extends DeepSignal<U>> (
       acc[key] = getValue(value, { peek });
     }
     return acc;
-  }, {} as { [key: string]: unknown }) as U;
+  }, {} as { [key: string]: unknown }) as X;
 
 export const useDeepSignal = <T extends Storeable> (initial: T | (() => T)) => 
   useMemo(() => deepSignal(typeof initial === "function" ? initial() : initial), []);
