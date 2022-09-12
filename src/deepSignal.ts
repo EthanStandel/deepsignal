@@ -58,10 +58,10 @@ const setValue = <U extends Storeable, T extends DeepSignal<U>> (
     deepSignal[key].value = payload[key]
   );
 
-const getValue = <U extends Storeable, T extends DeepSignal<U>, X extends ReadOnlyDeep<U>> (
+const getValue = <U extends Storeable, T extends DeepSignal<U>> (
   deepSignal: T,
   { peek = false }: { peek?: boolean } = {}
-): X =>
+): ReadOnlyDeep<U> =>
   Object.entries(deepSignal).reduce((
     acc,
     [key, value]
@@ -72,7 +72,7 @@ const getValue = <U extends Storeable, T extends DeepSignal<U>, X extends ReadOn
       acc[key] = getValue(value, { peek });
     }
     return acc;
-  }, {} as { [key: string]: unknown }) as X;
+  }, {} as { [key: string]: unknown }) as ReadOnlyDeep<U>;
 
 export const useDeepSignal = <T extends Storeable> (initial: T | (() => T)) => 
   useMemo(() => deepSignal(typeof initial === "function" ? initial() : initial), []);
