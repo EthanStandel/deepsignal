@@ -5,9 +5,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install
+      - name: Setup
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+      - name: Install
+        run: npm i
       - name: Test, build
         run: npm run build
