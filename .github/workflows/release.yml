@@ -8,10 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: install, test, build, publish
+      - name: setup
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-        run: npm i && npm run build:publish
+      - name: install, test, build, publish
+        run: |
+          npm i
+          npm run build:publish
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

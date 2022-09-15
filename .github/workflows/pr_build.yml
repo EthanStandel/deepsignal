@@ -1,12 +1,16 @@
 name: PR build
 on: [pull_request]
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: install, test, build
+      - name: setup
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-        run: npm i && npm run build
+      - name: install, test, build
+        run: |
+          npm i
+          npm run build
