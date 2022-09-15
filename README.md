@@ -1,9 +1,22 @@
-# preact-signal-store
+# 📶 preact-signal-store
 
 This library is meant to expand on Preact's new `Signal` primitive to make it a viable state management solution at the scale of a full
 state management system by wrapping the built in primitive with a new `DeepSignal` model.
 
-### Major v2.0 updates
+## Installation
+
+```sh
+# npm
+npm i preact-signal-store
+# yarn
+yarn add preact-signal-store
+# pnpm
+pnpm add preact-signal-store
+```
+
+This package also requires `preact` & `@preact/signals` as peer dependencies.
+
+## Major v2.0 updates
 
 This library was originally written with a much simpler `store` model. Version 2.0 aims to make the new `DeepSignal` model act far closer
 to how `Signals` work under the hood. I hope this should make it more accessible to Preact developers already comfortable with the `Signal`
@@ -40,6 +53,8 @@ const userStore = deepSignal({
 ...is equivalent to this code...
 
 ```ts
+import { signal } from "@preact/signals";
+
 const userStore = {
   name: {
     first: signal("Thor"),
@@ -138,6 +153,25 @@ const UserRegistrationForm = () => {
     </form>
   );
 }
+```
+
+### TypeScript support
+
+The API for `deepStore` and `useDeepStore` will handle dynamic typing for arbitrary input! It will also help you avoid a case like this
+
+```ts
+import { deepSignal } from "preact-signal-store";
+
+const userStore = deepSignal({
+  name: {
+    first: "Thor",
+    last: "Odinson"
+  },
+  email: "thor@avengers.org"
+});
+
+// TS error: Cannot assign to 'email' because it is a read-only property.
+userStore.value.email = "another@email.com"
 ```
 
 ## Recipes
@@ -243,22 +277,3 @@ effect(() => localStorage.setItem("USER_NAME_STORE_KEY", JSON.stringify(userStor
 
 This should fulfill most needs for middleware or plugins. If this fails to meet your needs, please file an
 issue and I will address the particular ask.
-
-## TypeScript support
-
-The API for `deepStore` and `useDeepStore` will handle dynamic typing for arbitrary input! It will also help you avoid a case like this
-
-```ts
-import { deepSignal } from "preact-signal-store";
-
-const userStore = deepSignal({
-  name: {
-    first: "Thor",
-    last: "Odinson"
-  },
-  email: "thor@avengers.org"
-});
-
-// TS error: Cannot assign to 'email' because it is a read-only property.
-userStore.value.email = "another@email.com"
-```
