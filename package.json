@@ -16,10 +16,7 @@
     }
   },
   "scripts": {
-    "build": "npm run test && tsc --emitDeclarationOnly && vite build",
-    "build:publish": "npm run build && npm publish",
-    "build:publish:beta": "npm run build && npm publish --tag beta",
-    "build:publish:local": "npm run build && npm publish --registry http://localhost:4873/",
+    "build": "tsc --emitDeclarationOnly && vite build",
     "test": "vitest run --coverage"
   },
   "peerDependencies": {
