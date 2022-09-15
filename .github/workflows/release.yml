@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: checkout
         uses: actions/checkout@v2.3.4
@@ -21,6 +20,8 @@ jobs:
       - name: build
         run: npm run build
       - name: publish
-        run: npm publish
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          npm publish
         env: 
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
