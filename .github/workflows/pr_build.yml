@@ -5,11 +5,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup
+      - name: install, test, build
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - name: Install
-        run: npm i
-      - name: Test, build
-        run: npm run build
+        run: npm i && npm run build
