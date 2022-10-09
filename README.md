@@ -1,3 +1,7 @@
+# Deprecated
+
+This package is being deprecated in favor of a package model that mirrors the original [`preactjs/signals` repo](https://github.com/preactjs/signals). If you were using this package, then [`@deepsignal/preact`](https://www.npmjs.com/package/@deepsignal/preact) is a drop-in-replacement for you! And if you were wishing this package had React support like `@preact/signals-react` then great news: You can now use [`@deepsignal/react`](https://www.npmjs.com/package/@deepsignal/react)! And if you happened to want the underlying framework-agnostic logic for this repo like `@preact/signals-core`, then you can use [`@deepsignal/core`](https://www.npmjs.com/package/@deepsignal/core).
+
 # 📶 preact-signal-store
 
 This library is meant to expand on Preact's new `Signal` primitive to make it a viable state management solution at the scale of a full
