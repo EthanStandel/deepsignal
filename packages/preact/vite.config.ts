@@ -1,7 +1,8 @@
-import { defineConfig } from "vitest/config";
+import path from "path";
+
 import preact from "@preact/preset-vite";
 import dts from "vite-plugin-dts";
-import path from "path";
+import { defineConfig } from "vitest/config";
 
 const coverage = 100;
 
@@ -13,16 +14,23 @@ export default defineConfig({
       statements: coverage,
       functions: coverage,
       branches: coverage,
-      lines: coverage
-    }
+      lines: coverage,
+    },
   },
   plugins: [preact(), dts({ insertTypesEntry: true })],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/deepSignal.ts"),
-      name: "preact-signal-store",
-      fileName: (format) => `lib.${format}.js`
+      entry: path.resolve(__dirname, "src/preact.ts"),
+      name: "deepsignalpreact",
+      fileName: format => `lib.${format}.js`,
     },
-    rollupOptions: { external: ["@preact/signals", "preact", "preact/hooks"] }
+    rollupOptions: {
+      external: [
+        "@preact/signals",
+        "preact",
+        "preact/hooks",
+        "@deepsignal/core",
+      ],
+    },
   },
 });

@@ -1,55 +1,39 @@
 {
-  "name": "preact-signal-store",
-  "private": false,
-  "version": "2.1.1",
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/lib.umd.js",
-  "module": "./dist/lib.es.js",
-  "types": "./dist/lib.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/lib.es.js",
-      "require": "./dist/lib.umd.js"
-    }
-  },
+  "name": "deepsignal",
+  "version": "0.0.0",
+  "license": "MIT",
   "scripts": {
-    "build": "tsc --emitDeclarationOnly && vite build",
-    "test": "vitest run --coverage"
+    "prepare": "husky install"
   },
-  "peerDependencies": {
-    "@preact/signals": "*",
-    "preact": "*"
-  },
+  "private": true,
   "devDependencies": {
-    "@preact/preset-vite": "^2.3.0",
-    "@preact/signals": "^1.0.1",
-    "@testing-library/preact": "^3.2.2",
-    "@types/node": "^18.7.16",
-    "@vitest/coverage-c8": "^0.23.1",
-    "jsdom": "^20.0.0",
-    "preact": "^10.10.6",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0",
-    "vite-plugin-dts": "^1.4.1",
-    "vitest": "^0.23.1"
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "@commitlint/format": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "concurrently": "^7.4.0",
+    "conventional-changelog-atom": "^2.0.8",
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.6.2",
+    "typescript": "~4.8.2"
   },
-  "homepage": "https://github.com/EthanStandel/preact-signal-store#readme",
-  "repository": "https://github.com/EthanStandel/preact-signal-store",
-  "keywords": [
-    "preact",
-    "react",
-    "state",
-    "management",
-    "manager",
-    "cqrs",
-    "redux",
-    "store",
-    "deep",
-    "signal",
-    "signals"
+  "lint-staged": {
+    "./**/*.{ts,tsx}": "npx eslint"
+  },
+  "workspaces": [
+    "packages/*"
   ],
-  "license": "MIT"
+  "engines": {
+    "node": "16.x.x",
+    "npm": "8.x.x"
+  },
+  "engineStrict": true,
+  "homepage": "https://github.com/EthanStandel/deepsignal#readme",
+  "repository": "https://github.com/EthanStandel/deepsignal"
 }
