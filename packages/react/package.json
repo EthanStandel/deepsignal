@@ -1,7 +1,7 @@
 {
   "name": "@deepsignal/react",
   "private": false,
-  "version": "3.0.1",
+  "version": "3.0.2",
   "type": "module",
   "files": [
     "dist"
@@ -20,7 +20,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@deepsignal/core": "3.0.1"
+    "@deepsignal/core": "3.0.2"
   },
   "peerDependencies": {
     "@preact/signals-react": "1.x.x"
@@ -40,8 +40,8 @@
     "vite-plugin-dts": "^1.4.1",
     "vitest": "^0.23.1"
   },
-  "homepage": "https://github.com/EthanStandel/deepsignal#readme",
-  "repository": "https://github.com/EthanStandel/deepsignal",
+  "homepage": "https://github.com/EthanStandel/deepsignal/tree/main/packages/react#readme",
+  "repository": "https://github.com/EthanStandel/deepsignal/tree/main/packages/react",
   "keywords": [
     "react",
     "state",
