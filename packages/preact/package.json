@@ -1,7 +1,7 @@
 {
   "name": "@deepsignal/preact",
   "private": false,
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "files": [
     "dist"
@@ -20,7 +20,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@deepsignal/core": "3.0.0"
+    "@deepsignal/core": "3.0.1"
   },
   "peerDependencies": {
     "@preact/signals": "1.x.x"
