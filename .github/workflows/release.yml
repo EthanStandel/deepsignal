@@ -15,13 +15,15 @@ jobs:
           node-version: 16.x
       - name: install
         run: npm i
-      - name: test
-        run: npm run test
       - name: build
-        run: npm run build
+        run: npm run build --workspaces
+      - name: test
+        run: npm run test --workspaces
       - name: publish
         run: |
           echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
-          npm publish
-        env: 
+          npm publish --workspace=@deepsignal/core
+          npm publish --workspace=@deepsignal/preact
+          npm publish --workspace=@deepsignal/react
+        env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}

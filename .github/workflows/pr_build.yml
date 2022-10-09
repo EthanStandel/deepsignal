@@ -12,7 +12,7 @@ jobs:
           node-version: 16.x
       - name: install
         run: npm i
-      - name: test
-        run: npm run test
       - name: build
-        run: npm run build
+        run: npm run build --workspaces
+      - name: test
+        run: npm run test --workspaces
