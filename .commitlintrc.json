@@ -1,12 +1,20 @@
 {
-  "extends": ["@commitlint/config-conventional"],
+  "extends": [
+    "@commitlint/config-conventional"
+  ],
   "formatter": "@commitlint/format",
   "rules": {
-    "scope-enum": [
-      2, "always", [ "client" ]
+    "type-enum": [
+      2,
+      "always",
+      [
+        "release"
+      ]
     ],
     "header-max-length": [
-      0, "always", 256
+      0,
+      "always",
+      256
     ]
   }
 }
