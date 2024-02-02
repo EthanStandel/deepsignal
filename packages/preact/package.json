@@ -12,7 +12,8 @@
   "exports": {
     ".": {
       "import": "./dist/lib.es.js",
-      "require": "./dist/lib.umd.js"
+      "require": "./dist/lib.umd.js",
+      "types": "./dist/lib.d.ts"
     }
   },
   "scripts": {
