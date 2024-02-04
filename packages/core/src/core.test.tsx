@@ -3,7 +3,7 @@ import { describe, it, expect } from "vitest";
 
 import { deepSignal, DeepSignal } from "./core";
 
-describe("deepSignal", () => {
+describe("@deepsignal/core", () => {
   it("turns string properties into Signals", () => {
     const testStore = deepSignal({
       hello: "world",
@@ -62,6 +62,26 @@ describe("deepSignal", () => {
     expect(testStore.hello.peek().world.foo[0]).toBe(3);
     expect(testStore.hello.world.peek().foo[0]).toBe(3);
     expect(testStore.hello.world.foo.peek()[0]).toBe(3);
+  });
+
+  it("allows for structural modifications of deepSignals", () => {
+    const testStore = deepSignal({
+      record: {} as Record<string, { name: string }>,
+    });
+    testStore.record.value = { foo: { name: "Foo" } };
+    expect(testStore.record.foo instanceof DeepSignal).toBeTruthy();
+    expect(testStore.record.foo.name instanceof Signal).toBeTruthy();
+  });
+
+  it("naturally treats Map, Set, & Date as atomic", () => {
+    const testStore = deepSignal({
+      map: new Map(),
+      set: new Set(),
+      date: new Date(),
+    });
+    expect(testStore.map instanceof Signal).toBeTruthy();
+    expect(testStore.set instanceof Signal).toBeTruthy();
+    expect(testStore.date instanceof Signal).toBeTruthy();
   });
 
   it("doesn't allow you to set a property with keys named peek or value", () => {

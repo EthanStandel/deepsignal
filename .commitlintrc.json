@@ -8,6 +8,14 @@
       2,
       "always",
       [
+        "feat",
+        "fix",
+        "chore",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
         "release"
       ]
     ],
