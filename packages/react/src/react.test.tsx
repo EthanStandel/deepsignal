@@ -1,9 +1,11 @@
+import { memo } from "react";
+
 import { render, fireEvent } from "@testing-library/react";
 import { it, expect, describe } from "vitest";
 
 import { deepSignal, useDeepSignal } from "./react";
 
-describe("deepSignal", () => {
+describe("@deepsignal/react", () => {
   it("rerenders if inner Signal is updated but the DeepSignal is subscribed to", () => {
     let renderCount = -1;
     const deepSignalInstance = deepSignal({ inner: { count: 0 } });
@@ -120,13 +122,75 @@ describe("deepSignal", () => {
     page.unmount();
   });
 
-  it("doesn't allow you to set a property with keys named peek or value", () => {
-    expect(() => deepSignal({ value: "hello" })).toThrowError(
-      /reserved property name/
+  it("can render modified structures", () => {
+    const deepSignalInstance = deepSignal({
+      input: "",
+      record: {} as Record<string, { name: string }>,
+    });
+
+    const Test = () => (
+      <>
+        <input
+          value={deepSignalInstance.input as any}
+          data-testid="add-new-item-input"
+          data-value={deepSignalInstance.input}
+          onChange={e =>
+            (deepSignalInstance.input.value = e.currentTarget.value)
+          }
+        />
+        <button
+          data-testid="add-new-item-button"
+          onClick={() => {
+            deepSignalInstance.record.value = {
+              ...deepSignalInstance.record.peek(),
+              [deepSignalInstance.input.peek()]: {
+                name: deepSignalInstance.input.peek(),
+              },
+            };
+            deepSignalInstance.input.value = "";
+          }}
+        >
+          Add new item
+        </button>
+        <ul>
+          {Object.keys(deepSignalInstance.record.value).map(key => (
+            <TestItem key={key} name={key} />
+          ))}
+        </ul>
+      </>
     );
 
-    expect(() => deepSignal({ peek: "hello" })).toThrowError(
-      /reserved property name/
-    );
+    let renderCount = -1;
+    const TestItem = memo(({ name }: { name: string }) => {
+      renderCount++;
+      return (
+        <li>
+          <input
+            data-testid={`${name}-name-input`}
+            value={deepSignalInstance.record[name].name as any}
+            onChange={e =>
+              (deepSignalInstance.record[name].name.value =
+                e.currentTarget.value)
+            }
+          />
+          <span>{deepSignalInstance.record[name].name as any}</span>
+        </li>
+      );
+    });
+
+    const page = render(<Test />);
+    const newItemInput = page.getByTestId("add-new-item-input");
+    const addNewItemButton = page.getByTestId("add-new-item-button");
+    fireEvent.change(newItemInput, { target: { value: "Foo" } });
+    expect(page.queryByText("Foo")).toBeFalsy();
+    fireEvent.click(addNewItemButton);
+    expect(page.getByText("Foo")).toBeTruthy();
+    expect(renderCount).toBe(0);
+    const fooNameInput = page.getByTestId("Foo-name-input");
+    fireEvent.change(fooNameInput, { target: { value: "Bar" } });
+    expect(page.queryByText("Foo")).toBeFalsy();
+    expect(page.getByText("Bar")).toBeTruthy();
+    expect(renderCount).toBe(0);
+    page.unmount();
   });
 });

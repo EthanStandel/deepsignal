@@ -3,7 +3,13 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "test-core": "npm run test --workspace=@deepsignal/core",
+    "test-preact": "npm run test --workspace=@deepsignal/preact",
+    "test-react": "npm run test --workspace=@deepsignal/react",
+    "publish-all": "npx tsx ./scripts/publish-all.ts"
   },
   "private": true,
   "devDependencies": {
@@ -21,6 +27,7 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.6.2",
+    "tsx": "^4.7.0",
     "typescript": "~4.8.2"
   },
   "lint-staged": {
@@ -30,8 +37,8 @@
     "packages/*"
   ],
   "engines": {
-    "node": "16.x.x",
-    "npm": "8.x.x"
+    "node": "18.x.x",
+    "npm": "9.x.x"
   },
   "engineStrict": true,
   "homepage": "https://github.com/EthanStandel/deepsignal#readme",
