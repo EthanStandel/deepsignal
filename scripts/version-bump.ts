@@ -4,7 +4,6 @@ import { writeFileSync, readFileSync } from "node:fs";
 import { version } from "../packages/core/package.json";
 
 const main = async () => {
-  await $`git stash`;
   const newVersion = (
     await $`npx semver ${version} ${process.argv.slice(2)}`
   ).stdout.split("\n")[0];
@@ -24,8 +23,6 @@ const main = async () => {
 
   await $`npm i`;
   await $`npx eslint`;
-  await $`git add --all`;
-  await $`git stash pop`;
 };
 
 main();
