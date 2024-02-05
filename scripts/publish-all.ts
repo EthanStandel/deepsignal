@@ -11,7 +11,7 @@ const main = async () => {
   ) => {
     const tag = version.split("-").slice(1).join("-").split(".")[0];
     await $`npm publish --workspace=@deepsignal/${workspace} ${
-      tag ? `--tag ${tag}` : ""
+      tag ? ["--tag", tag] : ""
     }`;
   };
 
