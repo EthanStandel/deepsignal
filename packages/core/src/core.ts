@@ -25,7 +25,6 @@ export type ReadOnlyDeep<T> = {
 export interface DeepSignalAccessors<T extends DeepState> {
   value: ReadOnlyDeep<T>;
   readonly peek: () => ReadOnlyDeep<T>;
-  readonly __structure: Signal<unknown>;
 }
 
 export type DeepSignalType<T extends DeepState> = DeepSignalAccessors<T> & {
@@ -57,7 +56,7 @@ export class DeepSignal<T extends DeepState> implements DeepSignalAccessors<T> {
       configurable: false,
     });
 
-    Object.defineProperty(this, "__structure", {
+    Object.defineProperty(this, "__INTERNAL_latestUpdatedStructurePayload", {
       value: new Signal(initialValue),
       writable: false,
       enumerable: false,
@@ -67,9 +66,26 @@ export class DeepSignal<T extends DeepState> implements DeepSignalAccessors<T> {
 
   value!: ReadOnlyDeep<T>;
   readonly peek!: () => ReadOnlyDeep<T>;
-  // internal use only!
-  readonly __structure!: Signal<unknown>;
+  readonly __INTERNAL_latestUpdatedStructurePayload!: Signal<T>;
 }
+
+const isAtomic = (value: any): value is AtomicState =>
+  typeof value !== "object" ||
+  value?.constructor === Date ||
+  value?.constructor === Map ||
+  value?.constructor === Set ||
+  value === null ||
+  Array.isArray(value);
+
+const validateKey = (key: PropertyKey) => {
+  if (
+    ["value", "peek", "__INTERNAL_latestUpdatedStructurePayload"].some(
+      iKey => iKey === key
+    )
+  ) {
+    throw new Error(`${key as string} is a reserved property name`);
+  }
+};
 
 export const deepSignal = <T extends DeepState>(
   initialValue: T
@@ -77,16 +93,8 @@ export const deepSignal = <T extends DeepState>(
   Object.assign(
     new DeepSignal(initialValue),
     Object.entries(initialValue).reduce((acc, [key, value]) => {
-      if (["value", "peek", "__structure"].some(iKey => iKey === key)) {
-        throw new Error(`${key} is a reserved property name`);
-      } else if (
-        typeof value !== "object" ||
-        value?.constructor === Date ||
-        value?.constructor === Map ||
-        value?.constructor === Set ||
-        value === null ||
-        Array.isArray(value)
-      ) {
+      validateKey(key);
+      if (isAtomic(value)) {
         acc[key] = signal(value);
       } else {
         acc[key] = deepSignal(value as DeepState);
@@ -98,16 +106,44 @@ export const deepSignal = <T extends DeepState>(
 const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
   deep: T,
   payload: U
-): void => {
+): boolean => {
+  let structureChanged = false;
   Object.keys(payload).forEach((key: keyof U) => {
     if (deep[key]) {
+      if (deep[key] instanceof Signal) {
+        deep[key].value = payload[key];
+      } else {
+        //@ts-ignore
+        const nestedStructureChanged = setValue(deep[key], payload[key]);
+        if (nestedStructureChanged) {
+          structureChanged = true;
+        }
+      }
       deep[key].value = payload[key];
     } else {
+      validateKey(key);
       // @ts-ignore
-      deep[key] = deepSignal(payload[key]);
+      deep[key] = isAtomic(payload[key])
+        ? signal(payload[key])
+        : // @ts-ignore
+          deepSignal(payload[key]);
+      structureChanged = true;
     }
   });
-  deep.__structure.value = payload;
+  Object.keys(deep).forEach(key => {
+    if (!payload[key]) {
+      //@ts-ignore
+      deep[key].value = undefined;
+      delete deep[key];
+      structureChanged = true;
+    }
+  });
+  if (structureChanged) {
+    //@ts-ignore
+    (deep as DeepSignal<U>).__INTERNAL_latestUpdatedStructurePayload.value =
+      payload;
+  }
+  return structureChanged;
 };
 
 const getValue = <U extends DeepState, T extends DeepSignalType<U>>(
@@ -115,8 +151,8 @@ const getValue = <U extends DeepState, T extends DeepSignalType<U>>(
   { peek = false }: { peek?: boolean } = {}
 ): ReadOnlyDeep<U> => {
   if (!peek) {
-    // calling the value to track the structure of this DeepSignal
-    deepSignal.__structure.value;
+    // calling the .value to track changes to the structure of this DeepSignal
+    deepSignal.__INTERNAL_latestUpdatedStructurePayload.value;
   }
   return Object.entries(deepSignal).reduce((acc, [key, value]) => {
     if (value instanceof Signal) {
