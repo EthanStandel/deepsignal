@@ -119,5 +119,17 @@ describe("@deepsignal/core", () => {
       //@ts-ignore
       testStore.__INTERNAL_latestUpdatedStructurePayload.peek().record.hello
     ).toBe("foo");
+
+    expect("hello" in testStore.record).toBeTruthy();
+    expect("hello" in testStore.record.peek()).toBeTruthy();
+
+    testStore.value = {
+      record: {
+        bar: "qux",
+      },
+    };
+
+    expect("hello" in testStore.record).toBeFalsy();
+    expect("hello" in testStore.record.peek()).toBeFalsy();
   });
 });

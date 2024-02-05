@@ -130,6 +130,14 @@ const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
       structureChanged = true;
     }
   });
+  Object.keys(deep).forEach(key => {
+    if (!payload[key]) {
+      //@ts-ignore
+      deep[key].value = undefined;
+      delete deep[key];
+      structureChanged = true;
+    }
+  });
   if (structureChanged) {
     //@ts-ignore
     (deep as DeepSignal<U>).__INTERNAL_latestUpdatedStructurePayload.value =
