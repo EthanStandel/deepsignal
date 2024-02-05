@@ -9,13 +9,15 @@
     "test-core": "npm run test --workspace=@deepsignal/core",
     "test-preact": "npm run test --workspace=@deepsignal/preact",
     "test-react": "npm run test --workspace=@deepsignal/react",
-    "publish-all": "npx tsx ./scripts/publish-all.ts"
+    "publish-all": "npx tsx ./scripts/publish-all.ts",
+    "version-bump": "npx tsx ./scripts/version-bump.ts"
   },
   "private": true,
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@commitlint/format": "^17.0.0",
+    "@types/semver": "^7.5.6",
     "@typescript-eslint/eslint-plugin": "^5.38.1",
     "@typescript-eslint/parser": "^5.38.1",
     "concurrently": "^7.4.0",
@@ -27,8 +29,10 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.6.2",
+    "semver": "^7.6.0",
     "tsx": "^4.7.0",
-    "typescript": "~4.8.2"
+    "typescript": "~4.8.2",
+    "zx": "^7.2.3"
   },
   "lint-staged": {
     "./**/*.{ts,tsx}": "npx eslint"
