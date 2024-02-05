@@ -92,4 +92,32 @@ describe("@deepsignal/core", () => {
       /reserved property name/
     );
   });
+
+  it("will only update the __INTERNAL_latestUpdatedStructurePayload property if the structure is modified", () => {
+    const testStore = deepSignal({
+      record: {
+        hello: "world",
+      } as Record<string, string>,
+    });
+    testStore.record.hello.value = "foo";
+    expect(testStore.record.hello.peek()).toBe("foo");
+    // structure hasn't changed so __INTERNAL_latestUpdatedStructurePayload
+    // will remain it's original value
+    expect(
+      //@ts-ignore
+      testStore.__INTERNAL_latestUpdatedStructurePayload.peek().record.hello
+    ).toBe("world");
+    testStore.value = {
+      record: {
+        ...testStore.peek().record,
+        bar: "baz",
+      },
+    };
+    // structure has now changed so __INTERNAL_latestUpdatedStructurePayload
+    // will be updated to latest value
+    expect(
+      //@ts-ignore
+      testStore.__INTERNAL_latestUpdatedStructurePayload.peek().record.hello
+    ).toBe("foo");
+  });
 });
