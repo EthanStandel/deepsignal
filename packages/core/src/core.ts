@@ -132,7 +132,7 @@ const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
   Object.keys(deep).forEach(key => {
     if (!payload[key]) {
       //@ts-ignore
-      deep[key].value = undefined;
+      deep[key].value = deep[key] instanceof DeepSignal ? {} : undefined;
       delete deep[key];
       structureChanged = true;
     }
