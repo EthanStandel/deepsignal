@@ -132,4 +132,23 @@ describe("@deepsignal/core", () => {
     expect("hello" in testStore.record).toBeFalsy();
     expect("hello" in testStore.record.peek()).toBeFalsy();
   });
+
+  it("supports nested deletions", () => {
+    const testStore = deepSignal({
+      record: {
+        foo: { name: "Foo" },
+        bar: { name: "Bar" },
+        baz: { name: "Baz" },
+      } as Record<string, { name: string }>,
+    });
+
+    const updatedPayload = { ...testStore.record.peek() };
+    delete updatedPayload.bar;
+
+    expect(testStore.record.bar).toBeDefined();
+
+    testStore.record.value = updatedPayload;
+
+    expect(testStore.record.bar).toBeUndefined();
+  });
 });
