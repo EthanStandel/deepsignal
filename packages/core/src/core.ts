@@ -119,7 +119,6 @@ const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
           structureChanged = true;
         }
       }
-      deep[key].value = payload[key];
     } else {
       validateKey(key);
       // @ts-ignore
