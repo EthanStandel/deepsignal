@@ -344,3 +344,7 @@ const TodoItem = memo(
   }
 );
 ```
+
+#### Possible footguns
+
+It may appear that if you iterate over `Object.keys(store.items)` here, you can avoid unnecessary rerenders. However, you need to rely on rerenders to get updates to iterative mappings so you must map over `Object.keys(store.items.value)` and accept the VDOM rerenders. And thus, there isn't necessarily a huge gain in performance by storing data this way _unless_ you only pass the key & store down to the iterated component and then memoize it to avoid unecessary rerenders.
