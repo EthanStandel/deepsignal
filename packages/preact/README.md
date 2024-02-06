@@ -102,6 +102,10 @@ const userStore = {
 };
 ```
 
+#### Side note for "How it works"
+
+This example is now somewhat antiquated. Starting with version 4.0.0, part of the DeepSignal model tracks it's own structural shape. This way you can store modifiable records of nested DeepSignals & Signals. The example above is still the most simple representation of the most common use case for DeepSignals. However, it is not a perfect representation of all of it's capabilities.
+
 ### Using `DeepSignal` in a local context
 
 By utilizing `useDeepSignal` you can get a local state DX that's very similar to class components while continuing to have the performance
@@ -272,3 +276,69 @@ effect(() => localStorage.setItem("USER_NAME_STORE_KEY", JSON.stringify(userStor
 
 This should fulfill most needs for middleware or plugins. If this fails to meet your needs, please file an
 issue and I will address the particular ask.
+
+### Modifiable Structure, new in 4.0.0
+
+New in 4.0.0, you can now have DeepSignals that represent modifiable data structures. If you wanted to create a DeepSignal as a record, it could be modified using the following example.
+
+```tsx
+import { DeepSignalType, useDeepSignal } from "@deepsignal/preact";
+import { memo } from "preact/compat";
+
+export const TodoList = () => {
+  const store = useDeepSignal(() => ({
+    newItemName: "",
+    items: {} as Record<string, { name: string }>,
+  }));
+
+  return (
+    <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          store.items.value = {
+            ...store.items.peek(),
+            [Math.random().toString()]: { name: store.newItemName.peek() },
+          };
+          store.newItemName.value = "";
+        }}
+      >
+        <input
+          value={store.newItemName}
+          onInput={(e) => (store.newItemName.value = e.currentTarget.value)}
+        />
+        <button>Add new item</button>
+      </form>
+      <ul>
+        {Object.keys(store.items.value).map((id) => (
+          <TodoItem key={id} id={id} store={store} />
+        ))}
+      </ul>
+    </>
+  );
+};
+
+const TodoItem = memo(
+  ({
+    id,
+    store,
+  }: {
+    id: string;
+    store: DeepSignalType<{ items: Record<string, { name: string }> }>;
+  }) => (
+    <li>
+      {store.items[id].name}
+      <button
+        onClick={() => {
+          const items = { ...store.items.peek() };
+          delete items[id];
+          store.items.value = items;
+        }}
+        aria-label="Delete item"
+      >
+        ❌
+      </button>
+    </li>
+  )
+);
+```
