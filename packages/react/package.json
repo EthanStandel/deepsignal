@@ -1,7 +1,7 @@
 {
   "name": "@deepsignal/react",
   "private": false,
-  "version": "4.0.0-alpha.4",
+  "version": "4.0.0",
   "type": "module",
   "files": [
     "dist"
@@ -21,7 +21,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@deepsignal/core": "4.0.0-alpha.4"
+    "@deepsignal/core": "4.0.0"
   },
   "peerDependencies": {
     "@preact/signals-react": "1.x.x"
