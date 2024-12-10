@@ -109,7 +109,7 @@ const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
 ): boolean => {
   let structureChanged = false;
   Object.keys(payload).forEach((key: keyof U) => {
-    if (deep[key]) {
+    if (Object.hasOwn(deep, key)) {
       if (deep[key] instanceof Signal) {
         deep[key].value = payload[key];
       } else {
@@ -130,7 +130,7 @@ const setValue = <U extends DeepState, T extends DeepSignalType<U>>(
     }
   });
   Object.keys(deep).forEach(key => {
-    if (!payload[key]) {
+    if (!Object.hasOwn(payload, key)) {
       //@ts-ignore
       deep[key].value = deep[key] instanceof DeepSignal ? {} : undefined;
       delete deep[key];

@@ -151,4 +151,19 @@ describe("@deepsignal/core", () => {
 
     expect(testStore.record.bar).toBeUndefined();
   });
+
+  it("supports nested boolean false values", () => {
+    const testStore = deepSignal({
+      record: {
+        foo: { name: "Foo", baz: false as boolean },
+        bar: { name: "Bar", baz: true as boolean },
+      },
+    });
+
+    testStore.record.foo.value = { name: "Foo", baz: true };
+    testStore.record.bar.value = { name: "Bar", baz: false };
+
+    expect(testStore.record.foo.baz.value).toBe(true);
+    expect(testStore.record.bar.baz.value).toBe(false);
+  });
 });
